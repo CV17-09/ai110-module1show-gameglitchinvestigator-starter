@@ -1,5 +1,8 @@
 import random
 import streamlit as st
+# FIX: `check_guess` and `parse_guess` were moved to `logic_utils.py`.
+# We import them to keep app logic focused on UI/interaction only.
+from logic_utils import check_guess, parse_guess
 
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
@@ -11,40 +14,10 @@ def get_range_for_difficulty(difficulty: str):
     return 1, 100
 
 
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    return True, value, None
+# `parse_guess` moved to `logic_utils.py` and is imported above.
 
 
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
+# `check_guess` moved to `logic_utils.py`. It returns the outcome string only.
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
@@ -55,6 +28,7 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
         return current_score + points
 
     if outcome == "Too High":
+        # logic changes based on even/odd attempt number, which may explain inconsistent behavior after misses.
         if attempt_number % 2 == 0:
             return current_score + 5
         return current_score - 5
@@ -65,7 +39,7 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
     return current_score
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
-
+st.title("Glitchy Guesser")
 st.title("🎮 Game Glitch Investigator")
 st.caption("An AI-generated guessing game. Something is off.")
 
@@ -160,7 +134,31 @@ if submit:
         else:
             secret = st.session_state.secret
 
-        outcome, message = check_guess(guess_int, secret)
+        outcome = check_guess(guess_int, secret)
+
+        # FIX: Hint direction corrected here.
+        # When the player's numeric guess is greater than the secret,
+        # the UI should instruct them to go LOWER; conversely, when
+        # the guess is less than the secret, instruct them to go HIGHER.
+        try:
+            if outcome == "Win":
+                message = "🎉 Correct!"
+            else:
+                if guess_int > secret:
+                    # guess is larger than secret -> ask player to go LOWER
+                    message = "📉 Go LOWER!"
+                else:
+                    # guess is smaller than secret -> ask player to go HIGHER
+                    message = "📈 Go HIGHER!"
+        except TypeError:
+            # Fallback for string comparison (secret may be a str on alternate turns)
+            g = str(guess_int)
+            if g == secret:
+                message = "🎉 Correct!"
+            elif g > secret:
+                message = "📉 Go LOWER!"
+            else:
+                message = "📈 Go HIGHER!"
 
         if show_hint:
             st.warning(message)

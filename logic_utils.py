@@ -9,7 +9,24 @@ def parse_guess(raw: str):
 
     Returns: (ok: bool, guess_int: int | None, error_message: str | None)
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    # FIX: Moved from `app.py` to `logic_utils.py` for separation of concerns.
+    # This function parses user input into an integer guess and returns
+    # (ok, value, error_message). It handles empty input and floats.
+    if raw is None:
+        return False, None, "Enter a guess."
+
+    if raw == "":
+        return False, None, "Enter a guess."
+
+    try:
+        if "." in raw:
+            value = int(float(raw))
+        else:
+            value = int(raw)
+    except Exception:
+        return False, None, "That is not a number."
+
+    return True, value, None
 
 
 def check_guess(guess, secret):
@@ -18,7 +35,25 @@ def check_guess(guess, secret):
 
     outcome examples: "Win", "Too High", "Too Low"
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    # FIX: Corrected comparison logic (previously hint messages were reversed).
+    # This function returns only the outcome string for use in logic tests
+    # ("Win", "Too High", "Too Low"). Numeric comparison is attempted
+    # first; if types differ, it falls back to string comparison.
+    if guess == secret:
+        return "Win"
+
+    try:
+        if guess > secret:
+            return "Too High"
+        else:
+            return "Too Low"
+    except TypeError:
+        g = str(guess)
+        if g == secret:
+            return "Win"
+        if g > secret:
+            return "Too High"
+        return "Too Low"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
