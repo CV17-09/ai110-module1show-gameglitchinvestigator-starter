@@ -1,17 +1,33 @@
 def get_range_for_difficulty(difficulty: str):
-    """Return (low, high) inclusive range for a given difficulty."""
+    """
+    Return the inclusive number range for the selected difficulty.
+
+    Args:
+        difficulty: The difficulty label chosen by the player.
+
+    Returns:
+        A tuple containing the lower and upper bounds for the game range.
+
+    Raises:
+        NotImplementedError: This function still needs to be refactored
+            from app.py into logic_utils.py.
+    """
     raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
 
 
 def parse_guess(raw: str):
     """
-    Parse user input into an int guess.
+    Parse raw user input into an integer guess.
 
-    Returns: (ok: bool, guess_int: int | None, error_message: str | None)
+    Args:
+        raw: The raw text entered by the player.
+
+    Returns:
+        A tuple of:
+            - ok: True if parsing succeeded, otherwise False
+            - guess_int: The parsed integer if valid, otherwise None
+            - error_message: An error message if parsing failed, otherwise None
     """
-    # FIX: Moved from `app.py` to `logic_utils.py` for separation of concerns.
-    # This function parses user input into an integer guess and returns
-    # (ok, value, error_message). It handles empty input and floats.
     if raw is None:
         return False, None, "Enter a guess."
 
@@ -31,31 +47,48 @@ def parse_guess(raw: str):
 
 def check_guess(guess, secret):
     """
-    Compare guess to secret and return (outcome, message).
+    Compare a guess to the secret number.
 
-    outcome examples: "Win", "Too High", "Too Low"
+    Args:
+        guess: The player's guess.
+        secret: The secret number to compare against.
+
+    Returns:
+        A string representing the result of the guess:
+        "Win", "Too High", or "Too Low".
     """
-    # FIX: Corrected comparison logic (previously hint messages were reversed).
-    # This function returns only the outcome string for use in logic tests
-    # ("Win", "Too High", "Too Low"). Numeric comparison is attempted
-    # first; if types differ, it falls back to string comparison.
     if guess == secret:
         return "Win"
 
     try:
         if guess > secret:
             return "Too High"
-        else:
-            return "Too Low"
+        return "Too Low"
     except TypeError:
-        g = str(guess)
-        if g == secret:
+        guess_str = str(guess)
+        secret_str = str(secret)
+
+        if guess_str == secret_str:
             return "Win"
-        if g > secret:
+        if guess_str > secret_str:
             return "Too High"
         return "Too Low"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
-    """Update score based on outcome and attempt number."""
+    """
+    Update the player's score based on the guess outcome.
+
+    Args:
+        current_score: The score before applying the update.
+        outcome: The result of the guess.
+        attempt_number: The current attempt number.
+
+    Returns:
+        The updated score as an integer.
+
+    Raises:
+        NotImplementedError: This function still needs to be refactored
+            from app.py into logic_utils.py.
+    """
     raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
