@@ -25,9 +25,14 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+### Game Purpose
+The purpose of this game is to guess a secret number between 1 and 100 within a limited number of attempts. The game provides hints such as "Higher" or "Lower" to help the player get closer to the correct number. It is designed to demonstrate debugging, game logic, and how state works in a simple interactive application.
+
+### Bugs Found
+While testing the game, several issues were identified. The secret number changed every time the "Submit" button was clicked because the variable storing the number was being reset. This made it impossible to correctly track guesses. Another issue was that the "Higher" and "Lower" hints were sometimes incorrect due to flawed comparison logic. Additionally, some logic was mixed between files, which made the code harder to maintain and test.
+
+### Fixes Applied
+To fix these issues, the secret number was stored properly so it would not reset every time the player made a guess. The hint logic was corrected so that the game accurately tells the player whether the secret number is higher or lower than the guess. The game logic was also refactored by moving reusable functions into `logic_utils.py`, improving code organization and making the project easier to test and maintain.
 
 ## 📸 Demo
 
